@@ -1,10 +1,11 @@
 {
     "manifest_version": 3,
     "name": "Legend Life Enhancer",
-    "version": "0.1",
+    "version": "0.2",
+    "description": "Enhances the Legend of the Mara game",
     "permissions": [
       "scripting",
-	  "webRequest",
+  	  "webRequest",
       "webNavigation",
       "tabs",
       "alarms",
@@ -25,7 +26,7 @@
     },
     "content_scripts": [
       {
-        "matches": ["https://lotm.otherside.xyz/camp/otherdeed/*"],
+        "matches": ["https://lotm.otherside.xyz/camp/otherdeed/*", "https://www.otherside-wiki.xyz/*"],
         "js": ["camp.js"],
         "run_at": "document_idle"
       }      
