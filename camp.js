@@ -163,6 +163,10 @@ function sendMessageAndSetData(el, index, oda, number, callback) {
                 // take element after parent
                 el = el.parentNode.nextElementSibling
                 // extract koda/mara and number
+                // check if innerText defined
+                if (el.innerText === undefined) {
+                    return;
+                }
                 const tokenId = el.innerText;
                 let [oda, number] = tokenId.split(" ");
                 // check if number undefined

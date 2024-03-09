@@ -8,9 +8,7 @@
   	  "webRequest",
       "webNavigation",
       "tabs",
-      "alarms",
-      "activeTab",
-      "storage"
+      "activeTab"
     ],
 	"icons": {
 		"16": "images/icon16.png",
@@ -19,7 +17,7 @@
 		"128": "images/icon128.png"
 	  },
     "host_permissions": [
-      "<all_urls>"
+      "https://www.otherside-wiki.xyz/*"
     ],
     "background": {
       "service_worker": "background.js"
