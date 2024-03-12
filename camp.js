@@ -1,4 +1,3 @@
-
 var oda_queue = [];
 let isUpdating = false;
 
@@ -140,7 +139,7 @@ function setOda(data, index) {
 
 // Helper function to send message and set data
 function sendMessageAndSetData(el, index, oda, number, callback) {
-    chrome.runtime.sendMessage({oda: oda, number: number, position: index}, function(response) {
+    chrome.runtime.sendMessage({oda: oda, number: number, position: index, type: 'odaLoad'}, function(response) {
       callback(response.data, response.position);
     });
     el.setAttribute('data-castiel-done', 'true');
@@ -178,8 +177,6 @@ function sendMessageAndSetData(el, index, oda, number, callback) {
                         sendMessageAndSetData(el, -1, oda, number, setOda);
                     }
                     observer.unobserve(el);
-                } else {
-                    console.log("number does not contain #: ", number);
                 }
 
             }
@@ -197,8 +194,6 @@ function sendMessageAndSetData(el, index, oda, number, callback) {
                 sendMessageAndSetData(el, index, oda, number, setOda);
               }
               observer.unobserve(el);
-            } else {
-                console.log("number does not contain #: ", number);
           }
         }
       }
@@ -274,7 +269,101 @@ const Mutationobserver = new MutationObserver((mutations) => {
     }
 });
 
+// function to check the number of the deed, and setup a clickable link to the deed
+function setClickableLinkToTab(el) {
+    if (el.getAttribute('data-castiel-done') !== 'true') {
+        const number = el.innerText;
+        isUpdating = true;
+        el.setAttribute('data-castiel-done', 'true');
+        // if the element has class text-4xl, then show icon
+        if (el.classList.contains('text-4xl')) {
+            const img = document.createElement('img');
+            img.src = chrome.runtime.getURL('images/dark_icon.png');
+            img.style.width = '40px';
+            img.style.height = '40px';
+            img.style.marginLeft = '5px';
+            img.style.verticalAlign = 'middle';
+            img.style.cursor = 'pointer';
+            el.appendChild(img);
+            el.style.padding = '5px';
+        } else {
+            el.style.border = '1px solid #d3d3d3';
+            el.style.padding = '2px 6px';
+        }
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';        
+        el.addEventListener('click', (event) => {
+            chrome.runtime.sendMessage({ type: 'rtxClick', deedId: number });
+            event.stopPropagation();
+        });
 
+        isUpdating = false;
+    }
+}
+
+// array of calls to be made
+let callsClickable = [];
+let observerRunning = false;
+
+
+function setupClickableLinkObserver() {
+    const observer = new MutationObserver((mutations) => {
+        observerRunning = true;
+        if (isUpdating) return;
+        for (let mutation of mutations) {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(node => {
+                    const matchingChild = node.querySelector && node.querySelector('span.text-2xl, span.text-4xl');
+                    if (matchingChild) {
+                        callsClickable.push(matchingChild);
+                    }
+                }); 
+            }
+        }
+        observerRunning = false;
+    });
+    const config = {
+        childList: true,
+        subtree: true
+    };
+    observer.observe(document.querySelector('#__next'), config);
+    const targetNodes = document.querySelectorAll('#__next span.text-2xl, span.text-4xl');
+    targetNodes.forEach(node => {
+        const number = node.innerText;
+        callsClickable.push(node);
+    });
+}
+
+let interval;
+const runInterval = (ms) => {
+    clearInterval(interval);
+    interval = setInterval(() => {
+        if (!observerRunning && callsClickable.length > 0) {
+            let el = callsClickable.shift();
+            if (el) {
+                setClickableLinkToTab(el);
+            }
+            runInterval(1);
+        } else {
+            runInterval(500);
+        }
+    }, ms);
+};
+
+runInterval(500);
+
+
+
+// wait for camp to load
+setTimeout(setupClickableLinkObserver, 2000);
+
+let lastUrl = window.location.href;
+setInterval(() => {
+    if (lastUrl !== window.location.href) {
+        lastUrl = window.location.href;
+        setTimeout(setupClickableLinkObserver, 5000);
+    }
+}, 1000);
 
 // Start observing the body for changes
 Mutationobserver.observe(document.body, {
