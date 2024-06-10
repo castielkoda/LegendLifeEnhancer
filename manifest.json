@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Legend Life Enhancer",
-    "version": "0.3",
+    "version": "0.4",
     "description": "Enhances the Legend of the Mara game",
     "permissions": [
       "scripting",
