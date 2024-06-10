@@ -18,14 +18,14 @@
 	  },
     "host_permissions": [
       "https://www.otherside-wiki.xyz/*",
-      "https://lotm.otherside.xyz/*"
+      "https://lotm.gg/*"
     ],
     "background": {
       "service_worker": "background.js"
     },
     "content_scripts": [
       {
-        "matches": ["https://lotm.otherside.xyz/camp/*"],
+        "matches": ["https://lotm.gg/camp/*"],
         "js": ["camp.js"],
         "run_at": "document_idle"
       }      
@@ -33,7 +33,7 @@
     "web_accessible_resources": [
         {
             "resources": ["images/dark_icon.png"],
-            "matches": ["https://lotm.otherside.xyz/*"]
+            "matches": ["https://lotm.gg/*"]
         }
     ]
   }  

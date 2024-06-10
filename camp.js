@@ -173,7 +173,7 @@ function sendMessageAndSetData(el, index, oda, number, callback) {
                     console.log("number is undefined: ", tokenId);
                 } else if (number.includes("#")) {
                     number = number.replace("#", "");
-                    if (oda === "KODA" || oda === "MARA") {
+                    if (oda === "KODA" || oda === "MARA" || oda === "KODAMARA") {
                         sendMessageAndSetData(el, -1, oda, number, setOda);
                     }
                     observer.unobserve(el);
@@ -183,13 +183,17 @@ function sendMessageAndSetData(el, index, oda, number, callback) {
         }
         if (el.getAttribute('data-castiel-done') !== 'true') {
           const tokenId = el.innerText;
+          // check if contains space
+          if (!tokenId.includes(" ")) {
+              return;
+          }
           let [oda, number] = tokenId.split(" ");
           // check if number undefined
             if (number === undefined) {
                 console.error("number is undefined: ", tokenId);
             } else if (number.includes("#")) {
               number = number.replace("#", "");
-              if (oda === "KODA" || oda === "MARA") {
+              if (oda === "KODA" || oda === "MARA" || oda === "KODAMARA") {
                 const index = [...el.parentNode.parentNode.parentNode.children].indexOf(el.parentNode.parentNode);
                 sendMessageAndSetData(el, index, oda, number, setOda);
               }
@@ -238,6 +242,9 @@ const Mutationobserver = new MutationObserver((mutations) => {
                     number = el.parentNode.getAttribute('data-token-id');
                     // we can get oda from src of the image, if it contains koda it's koda, otherwise it's mara
                     oda = el.src.includes('koda') ? 'koda' : 'mara';
+                    if (el.src.includes('kodamara')) {
+                        oda = 'kodamara';
+                    }
                     sendMessageAndSetData(el, index, oda, number, setOdaSmall);
                 }
             });

@@ -8,7 +8,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
   );
   
   function logTrafficRequests(details) {
-	let landPingMatch = details.url.match(/https:\/\/lotm\.otherside\.xyz\/api\/trpc\/land\.ping\?input=(.+)/);
+	let landPingMatch = details.url.match(/https:\/\/lotm\.gg\/api\/trpc\/land\.ping\?input=(.+)/);
 	if (landPingMatch) {
 	  let num = details.requestHeaders.find(header => header.name.toLowerCase() === 'x-land-token-id').value;
 	  if (!num) {
